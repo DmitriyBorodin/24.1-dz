@@ -14,7 +14,7 @@ class UserSerializer(ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("email", "phone", "city", "payments_history",)
+        fields = ("email", "phone", "city", "payments_history", "password",)
 
 
 class PaymentsSerializer(ModelSerializer):
@@ -22,3 +22,11 @@ class PaymentsSerializer(ModelSerializer):
     class Meta:
         model = Payments
         fields = '__all__'
+
+
+class AnotherUserSerializer(ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ("email",)
+        # exclude = ('password',)
