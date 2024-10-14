@@ -1,24 +1,31 @@
-from rest_framework.serializers import ModelSerializer, SerializerMethodField
+from rest_framework import serializers
+from rest_framework.fields import SerializerMethodField
 
-from lms.models import Lesson, Course
+from lms.models import Lesson, Course, Subscription
+from lms.validators import validate_description_links
 
 
-class LessonSerializer(ModelSerializer):
+class LessonSerializer(serializers.ModelSerializer):
+
+    description = serializers.CharField(validators=[validate_description_links])
 
     class Meta:
         model = Lesson
         fields = '__all__'
 
 
-class CourseSerializer(ModelSerializer):
+class CourseSerializer(serializers.ModelSerializer):
+
+    description = serializers.CharField(validators=[validate_description_links])
+
     class Meta:
         model = Course
         fields = "__all__"
 
 
-class CourseDetailSerializer(ModelSerializer):
-    amount_of_lessons = SerializerMethodField()
-    lessons = SerializerMethodField()
+class CourseDetailSerializer(serializers.ModelSerializer):
+    amount_of_lessons = serializers.SerializerMethodField()
+    lessons = serializers.SerializerMethodField()
 
     def get_amount_of_lessons(self, course):
         return Lesson.objects.filter(course=course).count()
@@ -29,3 +36,15 @@ class CourseDetailSerializer(ModelSerializer):
     class Meta:
         model = Course
         fields = ("name", "description", "amount_of_lessons", "lessons",)
+
+
+class SubscriptionSerializer(serializers.ModelSerializer):
+
+    is_subscribed = SerializerMethodField()
+
+    def get_is_subscribed(self, subscription):
+        return subscription.is_subscription_active
+
+    class Meta:
+        model = Subscription
+        fields = ("subscription_user", "subscription_course", "is_subscribed",)

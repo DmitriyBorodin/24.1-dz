@@ -13,8 +13,7 @@ from users.serializer import UserSerializer, PaymentsSerializer, \
 
 class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
-    serializer_class = UserSerializer if IsSameUser else AnotherUserSerializer
-    print(IsSameUser)
+    serializer_class = UserSerializer
 
     def get_permissions(self):
         if self.action in ['update', 'partial_update']:
@@ -22,10 +21,26 @@ class UserViewSet(ModelViewSet):
         return super().get_permissions()
 
     # def get_serializer_class(self):
-    #     if self.kwargs.get('pk') == self.request.user.pk:
-    #         return UserSerializer
-    #     else:
-    #         return AnotherUserSerializer
+
+        # obj_pk = self.kwargs.get('pk')
+        # user_pk = self.request.user.id
+
+        # if int(obj_pk) == int(user_pk):
+        #     return UserSerializer
+        # else:
+        #     return AnotherUserSerializer
+
+        # if IsSameUser:
+        #     return UserSerializer
+        # else:
+        #     return AnotherUserSerializer
+
+        # print(type(self.kwargs.get('pk')))
+        # print(type(self.request.user.id))
+        #
+        # print(f'obj_pk - {obj_pk}')
+        # print(f'user_pk - {user_pk}')
+        # print(obj_pk == user_pk)
 
 
 class PaymentsViewSet(ModelViewSet):

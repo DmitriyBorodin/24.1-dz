@@ -28,5 +28,4 @@ class AnotherUserSerializer(ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("email",)
-        # exclude = ('password',)
+        fields = ("email", "phone", "city",)
