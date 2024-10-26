@@ -72,10 +72,8 @@ class PaymentsCreateAPIView(CreateAPIView):
 
     def perform_create(self, serializer):
         payment = serializer.save(user=self.request.user)
-
         if payment.paid_course or payment.paid_lesson:
-            product = payment.paid_course if payment.paid_lesson else payment.paid_lesson
-            print(product)
+            product = payment.paid_course if payment.paid_course else payment.paid_lesson
             product_id = create_stripe_product(product)
             price = create_stripe_price(product_id, payment.payment_sum)
             session_id, payment_link = create_stripe_session(price)
