@@ -8,7 +8,8 @@ from lms.views import LessonViewSet
 
 from lms.views import CourseCreateAPIView, CourseListAPIView, CourseRetrieveAPIView, CourseUpdateAPIView, CourseDestroyAPIView
 from users.apps import UsersConfig
-from users.views import UserViewSet, PaymentsViewSet, UserCreateAPIView
+from users.views import UserViewSet, PaymentsViewSet, UserCreateAPIView, \
+    PaymentsCreateAPIView
 
 app_name = UsersConfig.name
 
@@ -24,6 +25,7 @@ urlpatterns = [
     path('register/', UserCreateAPIView.as_view(), name='register'),
     path('login/', TokenObtainPairView.as_view(permission_classes=(AllowAny,)), name='token_obtain_pair'),
     path('token/refresh', TokenRefreshView.as_view(permission_classes=(AllowAny,)), name='token_refresh'),
+    path("payments/create/", PaymentsCreateAPIView.as_view(),name="payment_create"),
 ]
 
 urlpatterns += router_users.urls

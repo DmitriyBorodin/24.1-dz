@@ -1,4 +1,6 @@
 from django.shortcuts import get_object_or_404
+from django.utils.decorators import method_decorator
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -11,6 +13,9 @@ from lms.serializers import LessonSerializer, CourseSerializer, \
 from users.permissions import IsModer, IsOwner
 
 
+@method_decorator(name="list",
+                  decorator=swagger_auto_schema(
+                      operation_description="Выводит список уроков с их описанием, владельцем и привязанным курсом"))
 class LessonViewSet(ModelViewSet):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer

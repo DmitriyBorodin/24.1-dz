@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
+from rest_framework.exceptions import ValidationError
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.viewsets import ModelViewSet
@@ -9,6 +10,8 @@ from users.models import User, Payments
 from users.permissions import IsSameUser
 from users.serializer import UserSerializer, PaymentsSerializer, \
     AnotherUserSerializer
+from users.services import create_stripe_product, create_stripe_price, \
+    create_stripe_session
 
 
 class UserViewSet(ModelViewSet):
@@ -61,3 +64,26 @@ class UserCreateAPIView(CreateAPIView):
         user = serializer.save(is_active=True)
         user.set_password(user.password)
         user.save()
+
+
+class PaymentsCreateAPIView(CreateAPIView):
+    serializer_class = PaymentsSerializer
+    queryset = Payments.objects.all()
+
+    def perform_create(self, serializer):
+        payment = serializer.save(user=self.request.user)
+
+        if payment.paid_course or payment.paid_lesson:
+            product = payment.paid_course if payment.paid_lesson else payment.paid_lesson
+            print(product)
+            product_id = create_stripe_product(product)
+            price = create_stripe_price(product_id, payment.payment_sum)
+            session_id, payment_link = create_stripe_session(price)
+
+            payment.session_id = session_id
+            payment.link = payment_link
+            payment.save()
+        else:
+            raise ValidationError("Выберите курс или урок для оплаты")
+
+

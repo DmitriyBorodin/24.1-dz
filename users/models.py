@@ -28,6 +28,10 @@ class Payments(models.Model):
     paid_lesson = models.ForeignKey(Lesson, on_delete=models.SET_NULL, blank=True, null=True, verbose_name="Оплаченный урок")
     payment_sum = models.PositiveIntegerField(verbose_name="Сумма оплаты")
 
+    session_id = models.CharField(max_length=255, blank=True, null=True, verbose_name="ID сессии")
+    link = models.URLField(max_length=500, blank=True, null=True, verbose_name="Ссылка на оплату")
+
+
     PAYMENT_TYPE_CHOICES = (
         ('Cash', 'Наличными'),
         ('Transfer', 'Перевод на счёт'),
@@ -37,3 +41,6 @@ class Payments(models.Model):
     class Meta:
         verbose_name = "Оплата"
         verbose_name_plural = "Оплаты"
+
+    def __str__(self):
+        return f'Оплата пользователя {self.user} на сумму {self.payment_sum}'
