@@ -16,6 +16,11 @@ djangorestframework-simplejwt = "^5.3.1"
 rest-framework-simplejwt = "^0.0.2"
 psycopg2 = "^2.9.9"
 drf-yasg = "^1.21.7"
+celery = "^5.4.0"
+eventlet = "^0.37.0"
+redis = "^5.2.0"
+stripe = "^11.1.1"
+django-celery-beat = "^2.7.0"
 
 
 [build-system]

@@ -10,6 +10,7 @@ from lms.models import Lesson, Course, Subscription
 from lms.pagination import CustomPagination
 from lms.serializers import LessonSerializer, CourseSerializer, \
     CourseDetailSerializer, SubscriptionSerializer
+from lms.tasks import send_course_update_notification
 from users.permissions import IsModer, IsOwner
 
 
@@ -64,6 +65,13 @@ class CourseUpdateAPIView(UpdateAPIView):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
     permission_classes = (IsModer | IsOwner, IsAuthenticated,)
+
+    def update(self, request, *args, **kwargs):
+        course = self.get_object()
+        subscription = Subscription.objects.filter(subscription_course=course).first()
+        if subscription:
+            send_course_update_notification(course.name, subscription.subscription_user.email)
+        return super().update(request, *args, **kwargs)
 
 
 class CourseDestroyAPIView(DestroyAPIView):
